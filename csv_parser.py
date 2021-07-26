@@ -11,30 +11,36 @@ import pandas as pd
 data = pd.read_csv("V:\Adulting\Job Hunting\ZenDesk\organizations.csv")
 
 
-
+payloads = []
 output = {
 
 }
 output['orgs'] = []
 
 for row in data.itertuples(index=False):
-    if (pd.isnull(row[data.columns.get_loc('notes')]) == False):
-        print(row[data.columns.get_loc('notes')])
-
+    page_count = 0
     output['orgs'].append(
         {
             "name": row[data.columns.get_loc('name')] if pd.isnull(row[data.columns.get_loc('name')]) == False else '',
             "domain_names": row[data.columns.get_loc('domain_names')] if pd.isnull(row[data.columns.get_loc('domain_names')]) == False else '',
             "details": row[data.columns.get_loc('details')] if pd.isnull(row[data.columns.get_loc('details')]) == False else '',
             "notes": row[data.columns.get_loc('notes')] if pd.isnull(row[data.columns.get_loc('notes')]) == False else '',
-            "merchant_id": row[data.columns.get_loc('merchant_id')] if pd.isnull(row[data.columns.get_loc('merchant_id')]) == False else '',
+            "organization_fields": {
+                "merchant_id": row[data.columns.get_loc('merchant_id')] if pd.isnull(row[data.columns.get_loc('merchant_id')]) == False else '',
+            },
             "tags": row[data.columns.get_loc('tags')] if pd.isnull(row[data.columns.get_loc('tags')]) == False else '',
         }
     )
+    if len(output['orgs']) == 100:
+        payloads.append(json.dumps(output))
+        output = {"orgs": []}
+        page_count += 1
+        print('payload pagination count is currently ', page_count)
 
-with open('output.json', 'w') as outfile:
-    json.dump(output, outfile)
-    print('objects saved successfully.')
+if output['orgs']:
+    payloads.append(json.dumps(output))
+
+print(payloads)
 # Users JSON format
 #         {
 #             "verified": true,
