@@ -7,7 +7,7 @@ import pandas as pd
 # Users: name, email, organization_id, role, active, notes, group, api_subscription, employee_id, promotion_code, tags
 
 
-class Data_parser:
+class ListParser:
     def create_orgs(filepath):
         data = pd.read_csv(filepath) # Placeholder filepath
 
