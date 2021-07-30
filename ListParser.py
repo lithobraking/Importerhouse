@@ -8,6 +8,8 @@ import pandas as pd
 
 
 class ListParser:
+
+    @staticmethod
     def create_orgs(filepath):
         data = pd.read_csv(filepath) # Placeholder filepath
 
@@ -40,6 +42,7 @@ class ListParser:
 
         return payloads
 
+    @staticmethod
     def create_users(filepath):
         data = pd.read_csv(filepath)  # Placeholder filepath
 
@@ -80,6 +83,7 @@ class ListParser:
         # with open('users.json', 'w') as outfile:
         #     json.dump(output, outfile, ensure_ascii=False,indent=4)
 
+    @staticmethod
     def create_tickets(filepath):
         data = pd.read_csv(filepath)  # Placeholder filepath
 
