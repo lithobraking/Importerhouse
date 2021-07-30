@@ -5,12 +5,11 @@ import pandas as pd
 
 # Organisations: name, domain_names, details, notes, merchant_id, tags
 # Users: name, email, organization_id, role, active, notes, group, api_subscription, employee_id, promotion_code, tags
-# Tickets: assignee_id, created_at, subject, description, status, submitter_id, requester_id, updated_at, due_at, about,
-#          business name, dept, emp id, product information, start date, subscription, tags
+
 
 class Data_parser:
     def create_orgs(filepath):
-        data = pd.read_csv("V:\Adulting\Job Hunting\ZenDesk\organizations.csv") # Placeholder filepath
+        data = pd.read_csv(filepath) # Placeholder filepath
 
         payloads = []
         output = {}
@@ -40,8 +39,6 @@ class Data_parser:
             payloads.append(json.dumps(output))
 
         return payloads
-    # Users JSON format
-
 
     def create_users(filepath):
         data = pd.read_csv(filepath)  # Placeholder filepath
@@ -83,3 +80,52 @@ class Data_parser:
         # with open('users.json', 'w') as outfile:
         #     json.dump(output, outfile, ensure_ascii=False,indent=4)
 
+    def create_tickets(filepath):
+        data = pd.read_csv(filepath)  # Placeholder filepath
+
+        payloads = []
+        output = {}
+        output['tickets'] = []
+
+        # Tickets: assignee_id, created_at, subject, description, status, submitter_id, requester_id, updated_at, due_at, about,
+        #          business name, dept, emp id, product information, start date, subscription, tags
+
+        for row in data.itertuples(index=False):
+            page_count = 0
+            output['tickets'].append(
+                {
+                    "assignee_id": int(row[data.columns.get_loc('assignee_id')]) if pd.isnull(row[data.columns.get_loc('assignee_id')]) == False else '',
+                    "created_at": row[data.columns.get_loc('created_at')] if pd.isnull(row[data.columns.get_loc('created_at')]) == False else '',
+                    "subject": row[data.columns.get_loc('subject')] if pd.isnull(row[data.columns.get_loc('subject')]) == False else '',
+                    "description": row[data.columns.get_loc('description')] if pd.isnull(row[data.columns.get_loc('description')]) == False else '',
+                    "status": row[data.columns.get_loc('status')] if pd.isnull(row[data.columns.get_loc('status')]) == False else '',
+                    "submitter_id": row[data.columns.get_loc('submitter_id')] if pd.isnull(row[data.columns.get_loc('submitter_id')]) == False else '',
+                    "requester_id": row[data.columns.get_loc('requester_id')] if pd.isnull(row[data.columns.get_loc('requester_id')]) == False else '',
+                    "updated_at": row[data.columns.get_loc('updated_at')] if pd.isnull(row[data.columns.get_loc('updated_at')]) == False else '',
+                    "custom_fields": [
+                        {"about": row[data.columns.get_loc('about')] if pd.isnull(row[data.columns.get_loc('about')]) == False else ''},
+                        {"business name": row[data.columns.get_loc('business name')] if pd.isnull(row[data.columns.get_loc('business name')]) == False else ''},
+                        {"dept": row[data.columns.get_loc('dept')] if pd.isnull(row[data.columns.get_loc('dept')]) == False else ''},
+                        {"emp id": row[data.columns.get_loc('emp id')] if pd.isnull(row[data.columns.get_loc('emp id')]) == False else ''},
+                        {"product information": row[data.columns.get_loc('product information')] if pd.isnull(row[data.columns.get_loc('product information')]) == False else ''},
+                        {"start date": row[data.columns.get_loc('start date')] if pd.isnull(row[data.columns.get_loc('start date')]) == False else ''},
+                        {"subscription": row[data.columns.get_loc('subscription')] if pd.isnull(row[data.columns.get_loc('subscription')]) == False else ''},
+                    ],
+                    "tags": row[data.columns.get_loc('tags')] if pd.isnull(row[data.columns.get_loc('tags')]) == False else ''
+                }
+            )
+            if len(output['tickets']) == 100:
+                payloads.append(json.dumps(output))
+                output = {"tickets": []}
+                page_count += 1
+                print('payload pagination count is currently ', page_count)
+
+        if output['tickets']:
+            payloads.append(json.dumps(output))
+
+        return payloads
+        # with open('tickets.json', 'w') as outfile:
+        #     json.dump(output, outfile, ensure_ascii=False,indent=4)
+
+    # create_users("V:\\Adulting\\Job Hunting\\ZenDesk\\users.csv")
+    # create_tickets("V:\\Adulting\\Job Hunting\\ZenDesk\\tickets.csv")
