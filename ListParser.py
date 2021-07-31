@@ -11,13 +11,12 @@ class ListParser:
     @staticmethod
     def create_orgs(filepath):
         data = pd.read_csv(filepath) # Placeholder filepath
-
         payloads = []
         output = {}
         output['orgs'] = []
+        page_count = 0
 
         for row in data.itertuples(index=False):
-            page_count = 0
             output['orgs'].append(
                 {
                     "name": row[data.columns.get_loc('name')] if pd.isnull(row[data.columns.get_loc('name')]) == False else '',
@@ -44,13 +43,11 @@ class ListParser:
     @staticmethod
     def create_users(filepath):
         data = pd.read_csv(filepath)  # Placeholder filepath
-
         payloads = []
         output = {}
         output['users'] = []
-
+        page_count = 0
         for row in data.itertuples(index=False):
-            page_count = 0
             output['users'].append(
                 {
                     "verified": True,
@@ -79,23 +76,18 @@ class ListParser:
             payloads.append(json.dumps(output))
 
         return payloads
-        # with open('users.json', 'w') as outfile:
-        #     json.dump(output, outfile, ensure_ascii=False,indent=4)
-
 
     @staticmethod
     def create_tickets(filepath):
         data = pd.read_csv(filepath)  # Placeholder filepath
-
         payloads = []
         output = {}
         output['tickets'] = []
-
+        page_count = 0
         # Tickets: assignee_id, created_at, subject, description, status, submitter_id, requester_id, updated_at, due_at, about,
         #          business name, dept, emp id, product information, start date, subscription, tags
 
         for row in data.itertuples(index=False):
-            page_count = 0
             output['tickets'].append(
                 {
                     "assignee_id": int(row[data.columns.get_loc('assignee_id')]) if pd.isnull(row[data.columns.get_loc('assignee_id')]) == False else '',
