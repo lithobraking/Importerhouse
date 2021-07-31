@@ -49,9 +49,9 @@ class ListParser:
         payloads = []
         output = {}
         output['users'] = []
-
+        page_count = 0
         for row in data.itertuples(index=False):
-            page_count = 0
+
             output['users'].append(
                 {
                     "verified": True,
@@ -70,13 +70,13 @@ class ListParser:
                     }
                 }
             )
-            if len(output['orgs']) == 100:
+            if len(output['users']) == 100:
                 payloads.append(json.dumps(output))
-                output = {"orgs": []}
-                page_count += 1
+                output = {"users": []}
+                page_count = page_count + 1
                 print('payload pagination count is currently ', page_count)
 
-        if output['orgs']:
+        if output['users']:
             payloads.append(json.dumps(output))
 
         return payloads
@@ -131,5 +131,3 @@ class ListParser:
         # with open('tickets.json', 'w') as outfile:
         #     json.dump(output, outfile, ensure_ascii=False,indent=4)
 
-    # create_users("V:\\Adulting\\Job Hunting\\ZenDesk\\users.csv")
-    # create_tickets("V:\\Adulting\\Job Hunting\\ZenDesk\\tickets.csv")

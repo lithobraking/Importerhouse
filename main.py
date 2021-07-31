@@ -1,6 +1,13 @@
 import Switchboard
-import ListParser
-
+from ListParser import ListParser
 
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    user = ''
+    pwd = ''
+    datatype = ''
+    filepath = ''
+    payloads = ''
+
+    result = Switchboard.send_data(datatype, user, pwd, payloads)
+
+
