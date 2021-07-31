@@ -7,10 +7,9 @@ import pandas as pd
 # Users: name, email, organization_id, role, active, notes, group, api_subscription, employee_id, promotion_code, tags
 
 class ListParser:
-
     @staticmethod
     def create_orgs(filepath):
-        data = pd.read_csv(filepath) # Placeholder filepath
+        data = pd.read_csv(filepath)
         payloads = []
         output = {}
         output['orgs'] = []
@@ -33,7 +32,6 @@ class ListParser:
                 payloads.append(json.dumps(output))
                 output = {"orgs": []}
                 page_count += 1
-                print('payload pagination count is currently ', page_count)
 
         if output['orgs']:
             payloads.append(json.dumps(output))
@@ -42,11 +40,12 @@ class ListParser:
 
     @staticmethod
     def create_users(filepath):
-        data = pd.read_csv(filepath)  # Placeholder filepath
+        data = pd.read_csv(filepath)
         payloads = []
         output = {}
         output['users'] = []
         page_count = 0
+
         for row in data.itertuples(index=False):
             output['users'].append(
                 {
@@ -70,7 +69,6 @@ class ListParser:
                 payloads.append(json.dumps(output))
                 output = {"users": []}
                 page_count += 1
-                print('payload pagination count is currently ', page_count)
 
         if output['users']:
             payloads.append(json.dumps(output))
@@ -79,13 +77,25 @@ class ListParser:
 
     @staticmethod
     def create_tickets(filepath):
-        data = pd.read_csv(filepath)  # Placeholder filepath
+        data = pd.read_csv(filepath)
         payloads = []
         output = {}
         output['tickets'] = []
         page_count = 0
         # Tickets: assignee_id, created_at, subject, description, status, submitter_id, requester_id, updated_at, due_at, about,
         #          business name, dept, emp id, product information, start date, subscription, tags
+
+        status_conversion = {   # Maps status indicators from legacy system to Zendesk-compatible versions
+            'new': 'New',
+            'open': 'Open',
+            'assigned': 'Open',
+            'waiting': 'Pending',
+            'external': 'On Hold',
+            'engineering': 'On Hold',
+            'resolved': 'Solved',
+            'done': 'Closed',
+            'retracted': 'Closed'
+        }
 
         for row in data.itertuples(index=False):
             output['tickets'].append(
@@ -94,7 +104,7 @@ class ListParser:
                     "created_at": row[data.columns.get_loc('created_at')] if pd.isnull(row[data.columns.get_loc('created_at')]) == False else '',
                     "subject": row[data.columns.get_loc('subject')] if pd.isnull(row[data.columns.get_loc('subject')]) == False else '',
                     "description": row[data.columns.get_loc('description')] if pd.isnull(row[data.columns.get_loc('description')]) == False else '',
-                    "status": row[data.columns.get_loc('status')] if pd.isnull(row[data.columns.get_loc('status')]) == False else '',
+                    "status": status_conversion[row[data.columns.get_loc('status')]]  if pd.isnull(row[data.columns.get_loc('status')]) == False else '',
                     "submitter_id": row[data.columns.get_loc('submitter_id')] if pd.isnull(row[data.columns.get_loc('submitter_id')]) == False else '',
                     "requester_id": row[data.columns.get_loc('requester_id')] if pd.isnull(row[data.columns.get_loc('requester_id')]) == False else '',
                     "updated_at": row[data.columns.get_loc('updated_at')] if pd.isnull(row[data.columns.get_loc('updated_at')]) == False else '',
@@ -114,14 +124,8 @@ class ListParser:
                 payloads.append(json.dumps(output))
                 output = {"tickets": []}
                 page_count += 1
-                print('payload pagination count is currently ', page_count)
 
         if output['tickets']:
             payloads.append(json.dumps(output))
 
         return payloads
-        # with open('tickets.json', 'w') as outfile:
-        #     json.dump(output, outfile, ensure_ascii=False,indent=4)
-
-    # create_users("V:\\Adulting\\Job Hunting\\ZenDesk\\users.csv")
-    # create_tickets("V:\\Adulting\\Job Hunting\\ZenDesk\\tickets.csv")
