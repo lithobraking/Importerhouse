@@ -6,7 +6,6 @@ import pandas as pd
 # Organisations: name, domain_names, details, notes, merchant_id, tags
 # Users: name, email, organization_id, role, active, notes, group, api_subscription, employee_id, promotion_code, tags
 
-
 class ListParser:
 
     @staticmethod
@@ -70,18 +69,19 @@ class ListParser:
                     }
                 }
             )
-            if len(output['orgs']) == 100:
+            if len(output['users']) == 100:
                 payloads.append(json.dumps(output))
-                output = {"orgs": []}
+                output = {"users": []}
                 page_count += 1
                 print('payload pagination count is currently ', page_count)
 
-        if output['orgs']:
+        if output['users']:
             payloads.append(json.dumps(output))
 
         return payloads
         # with open('users.json', 'w') as outfile:
         #     json.dump(output, outfile, ensure_ascii=False,indent=4)
+
 
     @staticmethod
     def create_tickets(filepath):
