@@ -59,7 +59,6 @@ class ListParser:
                     "email": row[data.columns.get_loc('email')] if pd.isnull(row[data.columns.get_loc('email')]) == False else '',
                     "name": row[data.columns.get_loc('name')] if pd.isnull(row[data.columns.get_loc('name')]) == False else '',
                     "notes": row[data.columns.get_loc('notes')] if pd.isnull(row[data.columns.get_loc('notes')]) == False else '',
-                    "organization_id": row[data.columns.get_loc('organization_id')] if pd.isnull(row[data.columns.get_loc('organization_id')]) == False else '',
                     "role": row[data.columns.get_loc('role')] if pd.isnull(row[data.columns.get_loc('role')]) == False else '',
                     "tags": row[data.columns.get_loc('tags')] if pd.isnull(row[data.columns.get_loc('tags')]) == False else [],
                     "user_fields": {
