@@ -17,11 +17,11 @@ def send_data(datatype, email, password, payloads):
     session = requests.Session()
     url = 'https://z3n-platformdev-noble.zendesk.com/api/v2/' + get_endpoint(datatype) + '.json'
     session.headers = {'Content-Type': 'application/json'}
-    status = 200
+    status = None
 
-    print(email, '\n', password, '\n', datatype, '\n', url, '\n')
+    # print(email, '\n', password, '\n', datatype, '\n', url, '\n')
     for payload in payloads:
-        print(payload)
+        # print(payload)
 
         response = session.post(url, data=payload, auth=(email, password))
         if response.status_code != 200:

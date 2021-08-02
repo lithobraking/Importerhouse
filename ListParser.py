@@ -3,9 +3,6 @@ import pandas as pd
 import ast
 
 # this module takes in a CSV file and parses its elements into a list of JSON objects for batch processing
-
-
-
 # TODO - add validation to properly handle the user submitting incorrect data shape
 
 # Organisations: name, domain_names[], details, notes, merchant_id, tags[]
@@ -15,11 +12,17 @@ def create_orgs(filepath):
     output = {'organizations': []}
     page_count = 0
 
+    def process_domain(domain):
+        import re
+        output = domain
+        output = re.sub('[()]', '', output)
+        return ast.literal_eval(output)
+
     for row in data.itertuples(index=False):
         output['organizations'].append(
             {
                 "name": row[data.columns.get_loc('name')] if pd.isnull(row[data.columns.get_loc('name')]) == False else '',
-                "domain_names": ast.literal_eval(row[data.columns.get_loc('domain_names')]) if pd.isnull(row[data.columns.get_loc('domain_names')]) == False else [],
+                "domain_names": process_domain(row[data.columns.get_loc('domain_names')]) if pd.isnull(row[data.columns.get_loc('domain_names')]) == False else [],
                 "details": row[data.columns.get_loc('details')] if pd.isnull(row[data.columns.get_loc('details')]) == False else '',
                 "notes": row[data.columns.get_loc('notes')] if pd.isnull(row[data.columns.get_loc('notes')]) == False else '',
                 "organization_fields": {

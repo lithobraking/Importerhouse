@@ -24,8 +24,8 @@ class DataManger:
     def set_payloads(self):
         self.payloads = None
 
-        # this could probably refactored in a way that takes advantage of a lambda function, but this is
-        # good enough for reaching MVP for now
+        # this could probably refactored in a way that takes advantage of a lambda function, but this
+        # is good enough for reaching MVP for now
         if self.datatype == 'Organizations':
             self.payloads = ListParser.create_orgs(self.filepath)
         elif self.datatype == 'Users':
