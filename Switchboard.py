@@ -19,14 +19,14 @@ def send_data(datatype, email, password, payloads):
     session.headers = {'Content-Type': 'application/json'}
     status = None
 
-    # print(email, '\n', password, '\n', datatype, '\n', url, '\n')
+    print(email, '\n', password, '\n', datatype, '\n', url, '\n')
     for payload in payloads:
         # print(payload)
-
-        response = session.post(url, data=payload, auth=(email, password))
-        if response.status_code != 200:
-            status = response.status_code
-            return response.status_code
-        status = response.status_code
+        pass
+        # response = session.post(url, data=payload, auth=(email, password))
+        # if response.status_code != 200:
+        #     status = response.status_code
+        #     return response.status_code
+        # status = response.status_code
 
     return status

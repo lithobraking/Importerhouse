@@ -104,7 +104,7 @@ def create_tickets(filepath):
     for row in data.itertuples(index=False):
         output['tickets'].append(
             {
-                "assignee_id": int(row[data.columns.get_loc('assignee_id')]) if pd.isnull(row[data.columns.get_loc('assignee_id')]) == False else '',
+                "assignee_id": int(row[data.columns.get_loc('assignee_id')]) if pd.isnull(row[data.columns.get_loc('assignee_id')]) == False else int(380963802813),
                 "created_at": row[data.columns.get_loc('created_at')] if pd.isnull(row[data.columns.get_loc('created_at')]) == False else '',
                 "subject": row[data.columns.get_loc('subject')] if pd.isnull(row[data.columns.get_loc('subject')]) == False else '',
                 "description": row[data.columns.get_loc('description')] if pd.isnull(row[data.columns.get_loc('description')]) == False else '',
@@ -131,5 +131,8 @@ def create_tickets(filepath):
 
     if output['tickets']:
         payloads.append(json.dumps(output))
+
+    with open('tickets.json', 'w') as outfile:
+        json.dump(output, outfile, ensure_ascii=False,indent=4)
 
     return payloads
