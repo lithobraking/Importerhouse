@@ -6,6 +6,9 @@ import pandas as pd
 # Organisations: name, domain_names, details, notes, merchant_id, tags
 # Users: name, email, organization_id, role, active, notes, group, api_subscription, employee_id, promotion_code, tags
 
+# TODO - add validation to properly handle the user submitting incorrect data shape
+
+
 def create_orgs(filepath):
     data = pd.read_csv(filepath)
     payloads = []
