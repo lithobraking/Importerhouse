@@ -21,7 +21,6 @@ class AppWindow(qtw.QWidget, Ui_app_window):
         import os
         default_path = os.path.join(os.path.expanduser('~'), 'Documents')
         filepath = qtw.QFileDialog.getOpenFileName(self, 'Load File', default_path, 'Comma Separated Values (*.csv)')
-        print(filepath[0])
         self.filepath_field.setText(filepath[0])
 
     def on_submit(self):

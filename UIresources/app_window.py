@@ -77,6 +77,7 @@ class Ui_app_window(object):
         self.password_field.setObjectName("password_field")
         self.main_form.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.password_field)
         self.filepath_field = QtWidgets.QLineEdit(self.formLayoutWidget)
+        self.filepath_field.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
