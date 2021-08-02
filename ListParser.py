@@ -45,13 +45,11 @@ def create_orgs(filepath):
 def create_users(filepath):
     data = pd.read_csv(filepath)
     payloads = []
-    output = {}
-    output['users'] = []
+    output = {'users': []}
     page_count = 0
 
     for row in data.itertuples(index=False):
-        output['users'].append(
-            {
+        user = {
                 "verified": True,
                 "active": True,
                 "email": row[data.columns.get_loc('email')] if pd.isnull(row[data.columns.get_loc('email')]) == False else '',
@@ -59,7 +57,6 @@ def create_users(filepath):
                 "notes": row[data.columns.get_loc('notes')] if pd.isnull(row[data.columns.get_loc('notes')]) == False else '',
                 "organization_id": row[data.columns.get_loc('organization_id')] if pd.isnull(row[data.columns.get_loc('organization_id')]) == False else '',
                 "role": row[data.columns.get_loc('role')] if pd.isnull(row[data.columns.get_loc('role')]) == False else '',
-                "tags": ast.literal_eval(row[data.columns.get_loc('tags')]) if pd.isnull(row[data.columns.get_loc('tags')]) == False else [],
                 "user_fields": {
                     "group": row[data.columns.get_loc('group')] if pd.isnull(row[data.columns.get_loc('group')]) == False else '',
                     "api_subscription": row[data.columns.get_loc('api_subscription')] if pd.isnull(row[data.columns.get_loc('api_subscription')]) == False else '',
@@ -67,7 +64,13 @@ def create_users(filepath):
                     "promotion code": row[data.columns.get_loc('promotion_code')] if pd.isnull(row[data.columns.get_loc('promotion_code')]) == False else ''
                 }
             }
-        )
+
+        if pd.isnull(row[data.columns.get_loc('tags')]) == False and row[data.columns.get_loc('tags') != '[]']:
+            user["tags"] = ast.literal_eval(row[data.columns.get_loc('tags')])
+        else: pass
+
+        output['users'].append(user)
+
         if len(output['users']) == 100:
             payloads.append(json.dumps(output))
             output = {"users": []}
