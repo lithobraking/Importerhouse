@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+import ast
 
 # this module takes in a CSV file and parses its elements into a list of JSON objects for batch processing
 
@@ -12,29 +13,28 @@ import pandas as pd
 def create_orgs(filepath):
     data = pd.read_csv(filepath)
     payloads = []
-    output = {}
-    output['orgs'] = []
+    output = {'organizations': []}
     page_count = 0
 
     for row in data.itertuples(index=False):
-        output['orgs'].append(
+        output['organizations'].append(
             {
                 "name": row[data.columns.get_loc('name')] if pd.isnull(row[data.columns.get_loc('name')]) == False else '',
-                "domain_names": row[data.columns.get_loc('domain_names')] if pd.isnull(row[data.columns.get_loc('domain_names')]) == False else '',
+                "domain_names": ast.literal_eval(row[data.columns.get_loc('domain_names')]) if pd.isnull(row[data.columns.get_loc('domain_names')]) == False else [],
                 "details": row[data.columns.get_loc('details')] if pd.isnull(row[data.columns.get_loc('details')]) == False else '',
                 "notes": row[data.columns.get_loc('notes')] if pd.isnull(row[data.columns.get_loc('notes')]) == False else '',
                 "organization_fields": {
                     "merchant_id": row[data.columns.get_loc('merchant_id')] if pd.isnull(row[data.columns.get_loc('merchant_id')]) == False else '',
                 },
-                "tags": row[data.columns.get_loc('tags')] if pd.isnull(row[data.columns.get_loc('tags')]) == False else [],
+                "tags": ast.literal_eval(row[data.columns.get_loc('tags')]) if pd.isnull(row[data.columns.get_loc('tags')]) == False else [],
             }
         )
-        if len(output['orgs']) == 100:
+        if len(output['organizations']) == 100:
             payloads.append(json.dumps(output))
-            output = {"orgs": []}
+            output = {"organizations": []}
             page_count += 1
 
-    if output['orgs']:
+    if output['organizations']:
         payloads.append(json.dumps(output))
 
     return payloads
