@@ -39,8 +39,8 @@ class AppWindow(qtw.QWidget, Ui_app_window):
             qtw.QMessageBox.critical(self, 'Import Failed!',
                                      'There was a problem importing your data to Zendesk.\n'
                                      f'HTTP Response Status: {self.handler.get_last_response()}')
-
-        qtw.QMessageBox.information(self, 'Import Complete', 'Data Successfully Imported!')
+        else:
+            qtw.QMessageBox.information(self, 'Import Complete', 'Data Successfully Imported!')
 
 
 if __name__ == '__main__':

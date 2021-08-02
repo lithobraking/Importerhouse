@@ -6,7 +6,7 @@ def get_endpoint(selection):
         endpoints = {
             'Organizations': 'organizations/create_many',
             'Users': 'users/create_or_update_many',
-            'Tickets': 'tickets/create_or_update_many'
+            'Tickets': 'tickets/create_many'
         }
         return endpoints[selection]
     except LookupError:
@@ -17,7 +17,7 @@ def send_data(datatype, email, password, payloads):
     session = requests.Session()
     url = 'https://z3n-platformdev-noble.zendesk.com/api/v2/' + get_endpoint(datatype) + '.json'
     session.headers = {'Content-Type': 'application/json'}
-    status = 200
+    status = None
 
     # print(email, '\n', password, '\n', datatype, '\n', url, '\n')
     for payload in payloads:

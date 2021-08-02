@@ -55,7 +55,7 @@ def create_users(filepath):
                 "email": row[data.columns.get_loc('email')] if pd.isnull(row[data.columns.get_loc('email')]) == False else '',
                 "name": row[data.columns.get_loc('name')] if pd.isnull(row[data.columns.get_loc('name')]) == False else '',
                 "notes": row[data.columns.get_loc('notes')] if pd.isnull(row[data.columns.get_loc('notes')]) == False else '',
-                "organization_id": row[data.columns.get_loc('organization_id')] if pd.isnull(row[data.columns.get_loc('organization_id')]) == False else '',
+                # "organization_id": int(row[data.columns.get_loc('organization_id')]) if pd.isnull(row[data.columns.get_loc('organization_id')]) == False else '',
                 "role": row[data.columns.get_loc('role')] if pd.isnull(row[data.columns.get_loc('role')]) == False else '',
                 "user_fields": {
                     "group": row[data.columns.get_loc('group')] if pd.isnull(row[data.columns.get_loc('group')]) == False else '',
@@ -65,9 +65,7 @@ def create_users(filepath):
                 }
             }
 
-        if pd.isnull(row[data.columns.get_loc('tags')]) == False and row[data.columns.get_loc('tags') != '[]']:
-            user["tags"] = ast.literal_eval(row[data.columns.get_loc('tags')])
-        else: pass
+
 
         output['users'].append(user)
 
@@ -133,5 +131,8 @@ def create_tickets(filepath):
 
     if output['tickets']:
         payloads.append(json.dumps(output))
+
+    with open('tickets.json', 'w') as outfile:
+        json.dump(output, outfile, ensure_ascii=False,indent=4)
 
     return payloads
