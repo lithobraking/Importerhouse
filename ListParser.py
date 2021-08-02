@@ -4,12 +4,11 @@ import ast
 
 # this module takes in a CSV file and parses its elements into a list of JSON objects for batch processing
 
-# Organisations: name, domain_names, details, notes, merchant_id, tags
-# Users: name, email, organization_id, role, active, notes, group, api_subscription, employee_id, promotion_code, tags
+
 
 # TODO - add validation to properly handle the user submitting incorrect data shape
 
-
+# Organisations: name, domain_names[], details, notes, merchant_id, tags[]
 def create_orgs(filepath):
     data = pd.read_csv(filepath)
     payloads = []
@@ -39,6 +38,7 @@ def create_orgs(filepath):
 
     return payloads
 
+# Users: name, email, organization_id, role, active, notes, group, api_subscription, employee_id, promotion_code, tags[]
 def create_users(filepath):
     data = pd.read_csv(filepath)
     payloads = []
@@ -56,7 +56,7 @@ def create_users(filepath):
                 "notes": row[data.columns.get_loc('notes')] if pd.isnull(row[data.columns.get_loc('notes')]) == False else '',
                 "organization_id": row[data.columns.get_loc('organization_id')] if pd.isnull(row[data.columns.get_loc('organization_id')]) == False else '',
                 "role": row[data.columns.get_loc('role')] if pd.isnull(row[data.columns.get_loc('role')]) == False else '',
-                "tags": row[data.columns.get_loc('tags')] if pd.isnull(row[data.columns.get_loc('tags')]) == False else [],
+                "tags": ast.literal_eval(row[data.columns.get_loc('tags')]) if pd.isnull(row[data.columns.get_loc('tags')]) == False else [],
                 "user_fields": {
                     "group": row[data.columns.get_loc('group')] if pd.isnull(row[data.columns.get_loc('group')]) == False else '',
                     "api_subscription": row[data.columns.get_loc('api_subscription')] if pd.isnull(row[data.columns.get_loc('api_subscription')]) == False else '',
@@ -82,7 +82,7 @@ def create_tickets(filepath):
     output['tickets'] = []
     page_count = 0
     # Tickets: assignee_id, created_at, subject, description, status, submitter_id, requester_id, updated_at, due_at, about,
-    #          business name, dept, emp id, product information, start date, subscription, tags
+    #          business name, dept, emp id, product information, start date, subscription, tags[]
 
     status_conversion = {   # Maps status indicators from legacy system to Zendesk-compatible versions
         'new': 'New',
@@ -116,7 +116,7 @@ def create_tickets(filepath):
                     {"start date": row[data.columns.get_loc('start date')] if pd.isnull(row[data.columns.get_loc('start date')]) == False else ''},
                     {"subscription": row[data.columns.get_loc('subscription')] if pd.isnull(row[data.columns.get_loc('subscription')]) == False else ''},
                 ],
-                "tags": row[data.columns.get_loc('tags')] if pd.isnull(row[data.columns.get_loc('tags')]) == False else ''
+                "tags": ast.literal_eval(row[data.columns.get_loc('tags')]) if pd.isnull(row[data.columns.get_loc('tags')]) == False else ''
             }
         )
         if len(output['tickets']) == 100:
