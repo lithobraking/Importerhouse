@@ -87,6 +87,7 @@ def create_tickets(filepath):
     output = {}
     output['tickets'] = []
     page_count = 0
+
     # Tickets: assignee_id, created_at, subject, description, status, submitter_id, requester_id, updated_at, due_at, about,
     #          business name, dept, emp id, product information, start date, subscription, tags[]
 
