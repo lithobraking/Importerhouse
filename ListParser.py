@@ -177,4 +177,9 @@ def delete_all_tickets():
         batch_count += 1
         page = []
 
-    print(batches)
+    # the part that does the actual deleting
+    for batch in batches:
+        batch_url = url + batches[batch]
+        print(f'deleting batch {batch}')
+        print(batches[batch])
+        session.delete(batch_url, auth=(Variables.user, Variables.pwd))
