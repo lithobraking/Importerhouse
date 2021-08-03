@@ -163,16 +163,18 @@ def delete_all_tickets():
 
     # retrieves list of all the ticket IDs in the Zendesk instance
     while source_url:
-        data = session.get(source_url).json()
+        data = session.get(source_url, auth=(Variables.user, Variables.pwd)).json()
 
         for ticket in data['tickets']:
             page.append(str(ticket['id']))
-            if len(page) == 100:
-                batches[batch_count] = ','.join(page)
-                batch_count += 1
 
         if data['meta']['has_more']:
             source_url = data['links']['next']
         else:
             source_url = None
 
+        batches[batch_count] = ','.join(page)
+        batch_count += 1
+        page = []
+
+    print(batches)
