@@ -1,14 +1,12 @@
 import json
 import pandas as pd
 import ast
+import requests
 
 # this module takes in a CSV file and parses its elements into a list of JSON objects for batch processing
 # TODO - add validation to properly handle the user submitting incorrect data shape
 
 # Organisations: name, domain_names[], details, notes, merchant_id, tags[]
-import requests
-
-import Variables
 
 
 def create_orgs(filepath):
@@ -60,7 +58,6 @@ def create_users(filepath):
                 "email": row[data.columns.get_loc('email')] if pd.isnull(row[data.columns.get_loc('email')]) == False else '',
                 "name": row[data.columns.get_loc('name')] if pd.isnull(row[data.columns.get_loc('name')]) == False else '',
                 "notes": row[data.columns.get_loc('notes')] if pd.isnull(row[data.columns.get_loc('notes')]) == False else '',
-                # "organization_id": int(row[data.columns.get_loc('organization_id')]) if pd.isnull(row[data.columns.get_loc('organization_id')]) == False else '',
                 "role": row[data.columns.get_loc('role')] if pd.isnull(row[data.columns.get_loc('role')]) == False else '',
                 "user_fields": {
                     "group": row[data.columns.get_loc('group')] if pd.isnull(row[data.columns.get_loc('group')]) == False else '',
@@ -69,9 +66,6 @@ def create_users(filepath):
                     "promotion code": row[data.columns.get_loc('promotion_code')] if pd.isnull(row[data.columns.get_loc('promotion_code')]) == False else ''
                 }
             }
-
-
-
         output['users'].append(user)
 
         if len(output['users']) == 100:
@@ -142,16 +136,12 @@ def create_tickets(filepath):
 
     return payloads
 
-def delete_all_tickets():
-    """
-    okay, here's the plan:
-    - get the IDs of the tickets in the database
-    - store those IDs in iterable chunks of 100
-    - run each chunk through tickets/delete_many endpoint
-    - simple as
-    """
+
+def delete_all_tickets(email, pwd):
+    # TODO - update to account for rate limiting
+
     session = requests.Session()
-    current_ticket_count = session.get('https://z3n-platformdev-noble.zendesk.com/api/v2/tickets/count', auth=(Variables.user, Variables.pwd)).json()
+    current_ticket_count = session.get('https://z3n-platformdev-noble.zendesk.com/api/v2/tickets/count', auth=(email, pwd)).json()
     if current_ticket_count['count']['value'] == 0:
         return 'There are no tickets to delete!'
 
@@ -163,7 +153,7 @@ def delete_all_tickets():
 
     # retrieves list of all the ticket IDs in the Zendesk instance
     while source_url:
-        data = session.get(source_url, auth=(Variables.user, Variables.pwd)).json()
+        data = session.get(source_url, auth=(email, pwd)).json()
 
         for ticket in data['tickets']:
             page.append(str(ticket['id']))
@@ -182,4 +172,4 @@ def delete_all_tickets():
         batch_url = url + batches[batch]
         print(f'deleting batch {batch}')
         print(batches[batch])
-        session.delete(batch_url, auth=(Variables.user, Variables.pwd))
+        session.delete(batch_url, auth=(email, pwd))
