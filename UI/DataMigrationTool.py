@@ -5,7 +5,7 @@ from UIresources.app_window import Ui_app_window
 from DataManager import DataManger
 
 qtw.QApplication.setAttribute(qtc.Qt.AA_EnableHighDpiScaling, True)  # enables high dpi scaling since I use a 4k monitor
-qtw.QApplication.setAttribute(qtc.Qt.AA_UseHighDpiPixmaps, True)  # use high dpi icons
+qtw.QApplication.setAttribute(qtc.Qt.AA_UseHighDpiPixmaps, True)  # enables use of high dpi icons
 
 
 class AppWindow(qtw.QWidget, Ui_app_window):
@@ -33,6 +33,14 @@ class AppWindow(qtw.QWidget, Ui_app_window):
         self.handler.set_datatype(self.data_type_dropdown.currentText())
         self.handler.set_auth(self.email_field.text(), self.password_field.text())
         self.handler.set_payloads()
+
+        self.handler.send_to_api()
+        if self.handler.get_last_response() != 200:
+            qtw.QMessageBox.critical(self, 'Import Failed!',
+                                     'There was a problem importing your data to Zendesk.\n'
+                                     f'HTTP Response Status: {self.handler.get_last_response()}')
+        else:
+            qtw.QMessageBox.information(self, 'Import Complete', 'Data Successfully Imported!')
 
 
 if __name__ == '__main__':

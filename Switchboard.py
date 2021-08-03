@@ -1,26 +1,32 @@
 import requests
 
+
 def get_endpoint(selection):
     try:
         endpoints = {
-            'organizations': 'organizations/create_many',
-            'users': 'users/create_many',
-            'tickets': 'tickets/create_many'
+            'Organizations': 'organizations/create_many',
+            'Users': 'users/create_or_update_many',
+            'Tickets': 'tickets/create_many'
         }
         return endpoints[selection]
     except LookupError:
         print('That selection does not exist.')
 
-def send_data(datatype, username, password, payloads):
+
+def send_data(datatype, email, password, payloads):
     session = requests.Session()
-    url = 'https://z3n-platformdev-noble.zendesk.com/api/v2/' + get_endpoint(datatype)
+    url = 'https://z3n-platformdev-noble.zendesk.com/api/v2/' + get_endpoint(datatype) + '.json'
     session.headers = {'Content-Type': 'application/json'}
+    status = None
 
+    # print(email, '\n', password, '\n', datatype, '\n', url, '\n')
     for payload in payloads:
-        response = session.post(url, data=payload, auth=(username, password))
+        # print(payload)
+        # pass
+        response = session.post(url, data=payload, auth=(email, password))
         if response.status_code != 200:
-            print('Import failed! (Status: {})'.format(response.status_code))
-            exit()
-        print('Data imported successfully.')
+            status = response.status_code
+            return response.status_code
+        status = response.status_code
 
-
+    return status
