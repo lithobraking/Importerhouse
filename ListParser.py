@@ -6,6 +6,11 @@ import ast
 # TODO - add validation to properly handle the user submitting incorrect data shape
 
 # Organisations: name, domain_names[], details, notes, merchant_id, tags[]
+import requests
+
+import Variables
+
+
 def create_orgs(filepath):
     data = pd.read_csv(filepath)
     payloads = []
@@ -136,3 +141,38 @@ def create_tickets(filepath):
         json.dump(output, outfile, ensure_ascii=False,indent=4)
 
     return payloads
+
+def delete_all_tickets():
+    """
+    okay, here's the plan:
+    - get the IDs of the tickets in the database
+    - store those IDs in iterable chunks of 100
+    - run each chunk through tickets/delete_many endpoint
+    - simple as
+    """
+    session = requests.Session()
+    current_ticket_count = session.get('https://z3n-platformdev-noble.zendesk.com/api/v2/tickets/count', auth=(Variables.user, Variables.pwd)).json()
+    if current_ticket_count['count']['value'] == 0:
+        return 'There are no tickets to delete!'
+
+    source_url = 'https://z3n-platformdev-noble.zendesk.com/api/v2/tickets?page[size]=100'
+    url = 'https://z3n-platformdev-noble.zendesk.com/api/v2/tickets/destroy_many?ids='
+    batches = {}
+    batch_count = 0
+    page = []
+
+    # retrieves list of all the ticket IDs in the Zendesk instance
+    while source_url:
+        data = session.get(source_url).json()
+
+        for ticket in data['tickets']:
+            page.append(str(ticket['id']))
+            if len(page) == 100:
+                batches[batch_count] = ','.join(page)
+                batch_count += 1
+
+        if data['meta']['has_more']:
+            source_url = data['links']['next']
+        else:
+            source_url = None
+
