@@ -140,8 +140,8 @@ def create_tickets(filepath, comments):
     if output['tickets']:
         payloads.append(json.dumps(output))
 
-    # with open('tickets.json', 'w') as outfile:
-    #     json.dump(output, outfile, ensure_ascii=False,indent=4)
+    with open('tickets.json', 'w') as outfile:
+        json.dump(output, outfile, ensure_ascii=False,indent=4)
 
     return payloads
 
