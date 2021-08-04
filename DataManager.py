@@ -22,6 +22,9 @@ class DataManger:
     def set_filepath(self, filepath):
         self.filepath = filepath
 
+    def set_comments(self, filepath):
+        self.filepath = filepath
+
     def set_payloads(self):
         self.payloads = None
 
