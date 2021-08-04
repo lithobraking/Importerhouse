@@ -6,7 +6,7 @@ def get_endpoint(selection):
         endpoints = {
             'Organizations': 'organizations/create_many',
             'Users': 'users/create_or_update_many',
-            'Tickets': 'tickets/create_many'
+            'Tickets': 'imports/tickets/create_many'
         }
         return endpoints[selection]
     except LookupError:
