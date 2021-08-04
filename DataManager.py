@@ -8,6 +8,7 @@ class DataManger:
         self.pwd = ''
         self.datatype = ''
         self.filepath = ''
+        self.ticket_comments = ''
         self.payloads = ''
         self.last_response = None
 
@@ -31,7 +32,7 @@ class DataManger:
         elif self.datatype == 'Users':
             self.payloads = ListParser.create_users(self.filepath)
         elif self.datatype == 'Tickets':
-            self.payloads = ListParser.create_tickets(self.filepath)
+            self.payloads = ListParser.create_tickets(self.filepath, self.ticket_comments)
 
     def send_to_api(self):
         # TODO - needs proper error handling in case of malformed data

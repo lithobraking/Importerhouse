@@ -78,7 +78,7 @@ def create_users(filepath):
 
     return payloads
 
-def create_tickets(filepath):
+def create_tickets(filepath, comments):
     data = pd.read_csv(filepath)
     payloads = []
     output = {}
@@ -88,7 +88,7 @@ def create_tickets(filepath):
     # Tickets: assignee_id, created_at, subject, description, status, submitter_id, requester_id, updated_at, due_at, about,
     #          business name, dept, emp id, product information, start date, subscription, tags[]
 
-    status_conversion = {   # Maps status indicators from legacy system to Zendesk-compatible versions
+    status_conversion = {  # Maps status indicators from legacy system to Zendesk-compatible versions
         'new': 'New',
         'open': 'Open',
         'assigned': 'Open',
@@ -100,29 +100,51 @@ def create_tickets(filepath):
         'retracted': 'Closed'
     }
 
+    comments_map = create_comments(comments)
+
     for row in data.itertuples(index=False):
-        output['tickets'].append(
-            {
-                "assignee_id": int(row[data.columns.get_loc('assignee_id')]) if pd.isnull(row[data.columns.get_loc('assignee_id')]) == False else int(380963802813),
-                "created_at": row[data.columns.get_loc('created_at')] if pd.isnull(row[data.columns.get_loc('created_at')]) == False else '',
-                "subject": row[data.columns.get_loc('subject')] if pd.isnull(row[data.columns.get_loc('subject')]) == False else '',
-                "description": row[data.columns.get_loc('description')] if pd.isnull(row[data.columns.get_loc('description')]) == False else '',
-                "status": status_conversion[row[data.columns.get_loc('status')]]  if pd.isnull(row[data.columns.get_loc('status')]) == False else '',
-                "submitter_id": row[data.columns.get_loc('submitter_id')] if pd.isnull(row[data.columns.get_loc('submitter_id')]) == False else '',
-                "requester_id": row[data.columns.get_loc('requester_id')] if pd.isnull(row[data.columns.get_loc('requester_id')]) == False else '',
-                "updated_at": row[data.columns.get_loc('updated_at')] if pd.isnull(row[data.columns.get_loc('updated_at')]) == False else '',
-                "custom_fields": [
-                    {"about": row[data.columns.get_loc('about')] if pd.isnull(row[data.columns.get_loc('about')]) == False else ''},
-                    {"business name": row[data.columns.get_loc('business name')] if pd.isnull(row[data.columns.get_loc('business name')]) == False else ''},
-                    {"dept": row[data.columns.get_loc('dept')] if pd.isnull(row[data.columns.get_loc('dept')]) == False else ''},
-                    {"emp id": row[data.columns.get_loc('emp id')] if pd.isnull(row[data.columns.get_loc('emp id')]) == False else ''},
-                    {"product information": row[data.columns.get_loc('product information')] if pd.isnull(row[data.columns.get_loc('product information')]) == False else ''},
-                    {"start date": row[data.columns.get_loc('start date')] if pd.isnull(row[data.columns.get_loc('start date')]) == False else ''},
-                    {"subscription": row[data.columns.get_loc('subscription')] if pd.isnull(row[data.columns.get_loc('subscription')]) == False else ''},
-                ],
-                "tags": ast.literal_eval(row[data.columns.get_loc('tags')]) if pd.isnull(row[data.columns.get_loc('tags')]) == False else ''
-            }
-        )
+        ticket = {
+            "assignee_id": int(row[data.columns.get_loc('assignee_id')]) if pd.isnull(
+                row[data.columns.get_loc('assignee_id')]) == False else int(380963802813),
+            "created_at": row[data.columns.get_loc('created_at')] if pd.isnull(
+                row[data.columns.get_loc('created_at')]) == False else '',
+            "subject": row[data.columns.get_loc('subject')] if pd.isnull(
+                row[data.columns.get_loc('subject')]) == False else '',
+            "description": row[data.columns.get_loc('description')] if pd.isnull(
+                row[data.columns.get_loc('description')]) == False else '',
+            "status": status_conversion[row[data.columns.get_loc('status')]] if pd.isnull(
+                row[data.columns.get_loc('status')]) == False else '',
+            "submitter_id": row[data.columns.get_loc('submitter_id')] if pd.isnull(
+                row[data.columns.get_loc('submitter_id')]) == False else '',
+            "requester_id": row[data.columns.get_loc('requester_id')] if pd.isnull(
+                row[data.columns.get_loc('requester_id')]) == False else '',
+            "updated_at": row[data.columns.get_loc('updated_at')] if pd.isnull(
+                row[data.columns.get_loc('updated_at')]) == False else '',
+            "custom_fields": [
+                {"about": row[data.columns.get_loc('about')] if pd.isnull(
+                    row[data.columns.get_loc('about')]) == False else ''},
+                {"business name": row[data.columns.get_loc('business name')] if pd.isnull(
+                    row[data.columns.get_loc('business name')]) == False else ''},
+                {"dept": row[data.columns.get_loc('dept')] if pd.isnull(
+                    row[data.columns.get_loc('dept')]) == False else ''},
+                {"emp id": row[data.columns.get_loc('emp id')] if pd.isnull(
+                    row[data.columns.get_loc('emp id')]) == False else ''},
+                {"product information": row[data.columns.get_loc('product information')] if pd.isnull(
+                    row[data.columns.get_loc('product information')]) == False else ''},
+                {"start date": row[data.columns.get_loc('start date')] if pd.isnull(
+                    row[data.columns.get_loc('start date')]) == False else ''},
+                {"subscription": row[data.columns.get_loc('subscription')] if pd.isnull(
+                    row[data.columns.get_loc('subscription')]) == False else ''},
+            ],
+            "tags": ast.literal_eval(row[data.columns.get_loc('tags')]) if pd.isnull(
+                row[data.columns.get_loc('tags')]) == False else ''
+        }
+
+        if int(row[data.columns.get_loc('id')]) in comments_map:
+            ticket['comments'] = comments_map[int(row[data.columns.get_loc('id')])]
+
+        output['tickets'].append(ticket)
+
         if len(output['tickets']) == 100:
             payloads.append(json.dumps(output))
             output = {"tickets": []}
@@ -131,10 +153,49 @@ def create_tickets(filepath):
     if output['tickets']:
         payloads.append(json.dumps(output))
 
-    with open('tickets.json', 'w') as outfile:
-        json.dump(output, outfile, ensure_ascii=False,indent=4)
+    # with open('tickets.json', 'w') as outfile:
+    #     json.dump(output, outfile, ensure_ascii=False,indent=4)
 
     return payloads
+
+
+def create_comments(filepath):
+    data = pd.read_csv(filepath)
+    comments = {}
+
+    for row in data.itertuples(index=False):
+        new_value = {
+            'author_id': int(row[data.columns.get_loc('author_id')]) if not pd.isnull(
+                row[data.columns.get_loc('author_id')]) else -1,
+            'html_body': row[data.columns.get_loc('html_body')] if not pd.isnull(
+                row[data.columns.get_loc('html_body')]) else '',
+            'public': bool(row[data.columns.get_loc('public')]) if not pd.isnull(
+                row[data.columns.get_loc('public')]) else False,
+            'created_at': row[data.columns.get_loc('created_at')] if not pd.isnull(
+                row[data.columns.get_loc('created_at')]) else '',
+        }
+
+        if int(row[data.columns.get_loc('parent_ticket_id')]) in comments:
+            temp = []
+            location = int(row[data.columns.get_loc('parent_ticket_id')])
+            value = comments[location]
+            if type(value) != type(temp):
+                temp.append(value)
+                temp.append(new_value)
+                comments[location] = temp
+            elif type(value) == type(temp):
+                comments[location].append(new_value)
+        else:
+            comments[int(row[data.columns.get_loc('parent_ticket_id')])] = {
+                'html_body': row[data.columns.get_loc('html_body')] if not pd.isnull(row[data.columns.get_loc('html_body')]) else '',
+                'public': bool(row[data.columns.get_loc('public')]) if not pd.isnull(row[data.columns.get_loc('public')]) else False,
+                'created_at': row[data.columns.get_loc('created_at')] if not pd.isnull(row[data.columns.get_loc('created_at')]) else '',
+            }
+
+    # with open('comments.json', 'w') as outfile:
+    #     json.dump(comments, outfile, ensure_ascii=False,indent=4)
+
+    return comments
 
 
 def delete_all_tickets(email, pwd):
