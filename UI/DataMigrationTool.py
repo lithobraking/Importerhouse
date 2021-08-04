@@ -34,7 +34,7 @@ class AppWindow(qtw.QWidget, Ui_app_window):
     def set_comments(self):
         default_path = os.path.join(os.path.expanduser('~'), 'Documents')
         filepath = qtw.QFileDialog.getOpenFileName(self, 'Load File', default_path, 'Comma Separated Values (*.csv)')
-        self.filepath_field.setText(filepath[0])
+        self.comments_field.setText(filepath[0])
 
     def on_submit(self):
         if self.filepath_field.text() == '' or self.data_type_dropdown.currentIndex() == -1 \
