@@ -23,7 +23,7 @@ class DataManger:
         self.filepath = filepath
 
     def set_comments(self, filepath):
-        self.filepath = filepath
+        self.ticket_comments = filepath
 
     def set_payloads(self):
         self.payloads = None

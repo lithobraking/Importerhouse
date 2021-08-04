@@ -2,6 +2,9 @@ import sys
 import os
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtCore as qtc
+
+import ListParser
+import Variables
 from UIresources.app_window import Ui_app_window
 from DataManager import DataManger
 
@@ -59,6 +62,7 @@ class AppWindow(qtw.QWidget, Ui_app_window):
 
 if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)
+    # ListParser.delete_all_tickets(Variables.user, Variables.pwd)
     view = AppWindow()
     view.show()
     sys.exit(app.exec_())
