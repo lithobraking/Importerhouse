@@ -69,12 +69,12 @@ def create_users(filepath):
         output['users'].append(user)
 
         if len(output['users']) == 100:
-            payloads.append(json.dumps(output))
+            payloads.append(json.dumps(output, ensure_ascii=False))
             output = {"users": []}
             page_count += 1
 
     if output['users']:
-        payloads.append(json.dumps(output))
+        payloads.append(json.dumps(output, ensure_ascii=False))
 
     return payloads
 
@@ -131,8 +131,8 @@ def create_tickets(filepath, comments):
                     idx += 1
 
         output['tickets'].append(ticket)
-
-        if len(output['tickets']) == 100:
+        print(len(payloads))
+        if len(output['tickets']) == 50:
             payloads.append(json.dumps(output))
             output = {"tickets": []}
             page_count += 1

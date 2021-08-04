@@ -62,7 +62,6 @@ class AppWindow(qtw.QWidget, Ui_app_window):
 
 if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)
-    # ListParser.delete_all_tickets(Variables.user, Variables.pwd)
     view = AppWindow()
     view.show()
     sys.exit(app.exec_())
